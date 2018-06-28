@@ -1,4 +1,6 @@
 import os
+import json
+import datetime
 from queue import Queue
 import configparser
 from threading import Thread
@@ -20,10 +22,12 @@ class TTSEngine(Thread):
     def run(self):
         while self.condition.state:
             text = self.text_queue.get()
-            self.manager.broker.publish('tts/speaking/start', 'speaking_start')
+            payload = "{\"on\":\"%s\", \"value\":\"%s\"}" % (datetime.datetime.now().isoformat(), text)
+            self.manager.broker.publish('tts/speaking/start', payload)
             process_command = [os.path.dirname(os.path.abspath(__file__)) + "/say.sh", '"%s"' % text]
             subprocess.call(process_command)
-            self.manager.broker.publish('tts/speaking/stop', 'speaking_stop')
+            payload = "{\"on\":\"%s\", \"value\":\"%s\"}" % (datetime.datetime.now().isoformat(), text)
+            self.manager.broker.publish('tts/speaking/stop', payload)
             self.text_queue.queue.clear() # Prevent accumulation of message (may not stay here)
 
         print("engine stop")
