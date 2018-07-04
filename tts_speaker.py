@@ -62,9 +62,13 @@ class TTS_Speaker:
             return None
 
     def _on_broker_message(self, client, userdata, message):
-        msg = json.loads(str(message.payload.decode("utf-8")))
-        logging.debug("Received message '%s' from topic %s" % (msg, message.topic))
-        self.text_queue.put(msg['value'])
+        m_string = str(message.payload.decode("utf-8"))
+        logging.debug("Received message '%s' from topic %s" % (m_string, message.topic))
+        if m_string.find("value") != -1:
+            msg = json.loads(m_string)
+            self.text_queue.put(msg['value'])
+        else:
+            self.text_queue.put("Désolé, je n'ai pas compris")
         
     def _on_broker_connect(self, client, userdata, flags, rc):
         logging.info("Connected to broker.")
