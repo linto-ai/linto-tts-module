@@ -8,6 +8,7 @@ It communicates with the system via an MQTT local bus.
 The following libraries (and APIs) are necessary for the proper functioning of the program:
 
 * Pico :
+
 ```
 sudo apt-get install libttspico-utils
 ```
