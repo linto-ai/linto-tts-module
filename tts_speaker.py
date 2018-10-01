@@ -30,7 +30,6 @@ class TTS_Speaker:
             self.broker = None
 
         if self.broker is not None:
-            self.broker.subscribe(self.config['broker_topic'])
             self.broker.on_message = self._on_broker_message
  
     def run(self):
@@ -50,7 +49,7 @@ class TTS_Speaker:
                 retry_error_callback=(lambda s: s.result())
                 )
     def broker_connect(self):
-        logging.info("Attempting connexion to broker at %s:%i" % (self.args.broker_ip, self.args.broker_port))
+        logging.info("Attempting connexion to broker at {}:{}".format(self.args.broker_ip, self.args.broker_port))
         try:
             broker = mqtt.Client()
             broker.on_connect = self._on_broker_connect
@@ -62,12 +61,22 @@ class TTS_Speaker:
             return None
 
     def _on_broker_message(self, client, userdata, message):
-        msg = json.loads(str(message.payload.decode("utf-8")))
-        logging.debug("Received message '%s' from topic %s" % (msg, message.topic))
-        self.text_queue.put(msg['value'])
+        try:
+            msg = json.loads(str(message.payload.decode("utf-8")))
+        except:
+            logging.warning("Failed to load message {}".format(str(message.payload.decode("utf-8"))))
+            return
+        logging.debug("Received message '{}' from topic {}".format(msg, message.topic))
+        if message.topic == self.config['broker_topic']:
+            self.ttsengine_thread.interupt_speech()
+            self.text_queue.put(msg['value'])
+        elif message.topic == self.config['cancel_topic']:
+            self.ttsengine_thread.interupt_speech()
         
     def _on_broker_connect(self, client, userdata, flags, rc):
         logging.info("Connected to broker.")
+        self.broker.subscribe(self.config['broker_topic'])
+        self.broker.subscribe(self.config['cancel_topic'])
 
 
 def main():
