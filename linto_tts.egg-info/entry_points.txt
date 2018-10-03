@@ -1,3 +1,0 @@
-[console_scripts]
-linto_tts = linto_tts.linto_tts:main
-

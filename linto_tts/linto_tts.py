@@ -9,6 +9,8 @@ import json
 from queue import Queue
 import paho.mqtt.client as mqtt
 import tenacity
+
+from linto_tts import DIST_FOLDER
 from linto_tts.engine import TTSEngine, Condition
 
 class TTS_Speaker:
@@ -84,7 +86,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG, format="%(levelname)8s %(asctime)s %(message)s ")
     # Read default config from file
     config = configparser.ConfigParser()
-    config.read(os.path.dirname(os.path.abspath(__file__))+"/config.conf")
+    config.read(os.path.join(DIST_FOLDER, "config.conf"))
     default_broker_ip = config['BROKER']['broker_ip']
     default_broker_port = config['BROKER']['broker_port']
     default_broker_topic = config['BROKER']['broker_topic']
