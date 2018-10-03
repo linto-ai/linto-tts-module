@@ -1,0 +1,12 @@
+MANIFEST.in
+README.md
+setup.py
+linto_tts/__init__.py
+linto_tts/config.conf
+linto_tts/engine.py
+linto_tts/linto_tts.py
+linto_tts.egg-info/PKG-INFO
+linto_tts.egg-info/SOURCES.txt
+linto_tts.egg-info/dependency_links.txt
+linto_tts.egg-info/entry_points.txt
+linto_tts.egg-info/top_level.txt

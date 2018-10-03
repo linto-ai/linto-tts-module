@@ -1,0 +1,12 @@
+Metadata-Version: 1.0
+Name: linto-tts
+Version: 0.1.0
+Summary: linto_tts is an engine to produce voice from a text using pico2wave. It listen for a mqtt message contening text to be spoken.
+Home-page: UNKNOWN
+Author: Rudy Baraglia
+Author-email: baraglia.rudy@gmail.com
+License: AGPL V3
+Project-URL: github, 
+Description: Refer to README
+Keywords: tts linto mqtt
+Platform: UNKNOWN

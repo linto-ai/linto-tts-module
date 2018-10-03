@@ -9,7 +9,7 @@ import json
 from queue import Queue
 import paho.mqtt.client as mqtt
 import tenacity
-from engine import TTSEngine, Condition
+from linto_tts.engine import TTSEngine, Condition
 
 class TTS_Speaker:
     def __init__(self, args, config):
