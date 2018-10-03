@@ -61,7 +61,6 @@ class TTS_Speaker:
             return None
 
     def _on_broker_message(self, client, userdata, message):
-<<<<<<< HEAD
         try:
             msg = json.loads(str(message.payload.decode("utf-8")))
         except:
@@ -73,15 +72,6 @@ class TTS_Speaker:
             self.text_queue.put(msg['value'])
         elif message.topic == self.config['cancel_topic']:
             self.ttsengine_thread.interupt_speech()
-=======
-        m_string = str(message.payload.decode("utf-8"))
-        logging.debug("Received message '%s' from topic %s" % (m_string, message.topic))
-        if m_string.find("value") != -1:
-            msg = json.loads(m_string)
-            self.text_queue.put(msg['value'])
-        else:
-            self.text_queue.put("Désolé, je n'ai pas compris")
->>>>>>> fa6819db8f075a933d52877b3d614c4ad32d9f48
         
     def _on_broker_connect(self, client, userdata, flags, rc):
         logging.info("Connected to broker.")
