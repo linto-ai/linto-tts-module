@@ -7,7 +7,8 @@ setup(
     include_package_data=True,
     packages=find_packages(),
     entry_points = {
-        'console_scripts': ['linto_tts=linto_tts.linto_tts:main',],
+        'console_scripts': ['linto_tts=linto_tts.tts_client:main',
+                            'linto_tts_conf=linto_tts.tts_config:main'],
     },
     install_requires=[],
     package_data={},

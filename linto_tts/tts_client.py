@@ -93,7 +93,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Text To Speech Module. Read text from MQTT broker and output it.')
     parser.add_argument('--broker-ip',dest='broker_ip',default=default_broker_ip, help="MQTT Broker IP")
-    parser.add_argument('--borker-port', dest='broker_port',default=int(default_broker_port), help='MQTT broker port', type=int)
+    parser.add_argument('--broker-port', dest='broker_port',default=int(default_broker_port), help='MQTT broker port', type=int)
     parser.add_argument('--broker-topic', dest='broker_topic', default=default_broker_topic, help='Broker on which to publish when the WUW is spotted')
     args = parser.parse_args()
     
