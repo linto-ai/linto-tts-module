@@ -22,5 +22,4 @@ setup(
         "github" : ""
     },
     long_description="Refer to README"
-
 )
