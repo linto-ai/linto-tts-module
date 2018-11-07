@@ -10,7 +10,11 @@ setup(
         'console_scripts': ['linto_tts=linto_tts.tts_client:main',
                             'linto_tts_conf=linto_tts.tts_config:main'],
     },
-    install_requires=[],
+    install_requires=[
+        "tenacity>=5.0.2",
+        "paho-mqtt>=1.4.0",
+        "Wave>=0.0.2"
+    ],
     package_data={},
     author="Rudy Baraglia",
     author_email="baraglia.rudy@gmail.com",
