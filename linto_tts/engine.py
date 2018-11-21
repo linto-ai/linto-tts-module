@@ -35,11 +35,12 @@ class TTSEngine(Thread):
         text -- sentence to be spoken
         """
         #Create sound file
-        command = ["pico2wave", "-l", "fr-FR", "-w", "/tmp/test.wav", text]
+        command = ["pico2wave", "-l", "fr-FR", "-w", "/tmp/speech.wav", text]
         subprocess.call(command)
-
+        command = ["sox", "/tmp/speech.wav", "-r", "44100", "-t", "wav", "/tmp/speech_sample.wav"]
+        subprocess.call(command)
         #Play it
-        f = wave.open("/tmp/test.wav")
+        f = wave.open("/tmp/speech_sample.wav")
         stream = self.audio.open(format = self.audio.get_format_from_width(f.getsampwidth()),  
                 channels = f.getnchannels(),  
                 rate = f.getframerate(),  
