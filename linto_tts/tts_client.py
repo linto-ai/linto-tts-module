@@ -14,16 +14,15 @@ from linto_tts import DIST_FOLDER
 from linto_tts.engine import TTSEngine, Condition
 
 class TTS_Speaker:
-    def __init__(self, args, config):
+    def __init__(self, args):
         self.args = args
-        self.config = config['BROKER']
 
         #Thread communication
         self.text_queue = Queue() #Queue for communication between provider and engine
         self.condition = Condition() #Boolean Object to safely stop thread.
         
         #Engine
-        self.ttsengine_thread = TTSEngine(self.text_queue, self.condition, self)
+        self.ttsengine_thread = TTSEngine(self.text_queue, self.condition, args.lang, self)
 
         #MQTT broker client
         if args.broker_ip not in ['None', 'none', '']:
@@ -69,16 +68,16 @@ class TTS_Speaker:
             logging.warning("Failed to load message {}".format(str(message.payload.decode("utf-8"))))
             return
         logging.debug("Received message '{}' from topic {}".format(msg, message.topic))
-        if message.topic == self.config['broker_topic']:
+        if message.topic == self.args.broker_topic:
             self.ttsengine_thread.interupt_speech()
             self.text_queue.put(msg['value'])
-        elif message.topic == self.config['cancel_topic']:
+        elif message.topic == self.args.cancel_topic:
             self.ttsengine_thread.interupt_speech()
         
     def _on_broker_connect(self, client, userdata, flags, rc):
         logging.info("Connected to broker.")
-        self.broker.subscribe(self.config['broker_topic'])
-        self.broker.subscribe(self.config['cancel_topic'])
+        self.broker.subscribe(self.args.broker_topic)
+        self.broker.subscribe(self.args.cancel_topic)
 
 
 def main():
@@ -87,18 +86,20 @@ def main():
     # Read default config from file
     config = configparser.ConfigParser()
     config.read(os.path.join(DIST_FOLDER, "config.conf"))
-    default_broker_ip = config['BROKER']['broker_ip']
-    default_broker_port = config['BROKER']['broker_port']
-    default_broker_topic = config['BROKER']['broker_topic']
+    default_broker_ip = config['DEFAULT']['broker_ip']
+    default_broker_port = config['DEFAULT']['broker_port']
+    default_broker_topic = config['DEFAULT']['broker_topic']
+    default_lang = config['DEFAULT']['lang']
 
     parser = argparse.ArgumentParser(description='Text To Speech Module. Read text from MQTT broker and output it.')
     parser.add_argument('--broker-ip',dest='broker_ip',default=default_broker_ip, help="MQTT Broker IP")
     parser.add_argument('--broker-port', dest='broker_port',default=int(default_broker_port), help='MQTT broker port', type=int)
     parser.add_argument('--broker-topic', dest='broker_topic', default=default_broker_topic, help='Broker on which to publish when the WUW is spotted')
+    parser.add_argument('-l', dest='lang', default=default_lang, choices=['en-US', 'en-GB', 'fr-FR', 'es-ES', 'de-DE', 'it-IT'], help='Language')
     args = parser.parse_args()
     
     #Instanciate runner
-    runner = TTS_Speaker(args, config)
+    runner = TTS_Speaker(args)
     runner.run()
 
 if __name__ == '__main__':

@@ -12,16 +12,18 @@ def main():
     parser.add_argument('--broker-ip',dest='broker_ip', help="MQTT Broker IP")
     parser.add_argument('--broker-port', dest='broker_port', help='MQTT broker port')
     parser.add_argument('--broker-topic', dest='broker_topic', help='Broker on which to publish when the WUW is spotted')
+    parser.add_argument('--lang', dest='lang',choices=['en-US', 'en-GB', 'fr-FR', 'es-ES', 'de-DE', 'it-IT'], help='Set the default language.')
     args = parser.parse_args()
 
     config_file = os.path.join(DIST_FOLDER, "config.conf")
     with open(config_file, 'r') as f:
         lines = f.readlines()
     if args.action == "show":
-        for line in lines[1:]:
+        for line in [line for line in lines if not line.startswith('[')]:
             print(line.strip())
         return
     elif args.action == "set":
+
         params = dict()
         for line in [line.strip() for line in lines[1:] if len(line.strip()) >1 ]:
             p, val = line.split('=')

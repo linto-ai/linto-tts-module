@@ -16,13 +16,14 @@ class Condition:
 
 class TTSEngine(Thread):
     chunk = 1024
-    def __init__(self, text_queue: Queue, condition: Condition, manager):
+    def __init__(self, text_queue: Queue, condition: Condition, lang, manager):
         Thread.__init__(self)
         self.condition = condition
         self.text_queue = text_queue
         self.manager = manager
         self.playing = False
         self.audio = pyaudio.PyAudio()
+        self.lang = lang
 
     def interupt_speech(self):
         self.playing = False
@@ -35,7 +36,7 @@ class TTSEngine(Thread):
         text -- sentence to be spoken
         """
         #Create sound file
-        command = ["pico2wave", "-l", "fr-FR", "-w", "/tmp/speech.wav", text]
+        command = ["pico2wave", "-l", self.lang, "-w", "/tmp/speech.wav", text]
         subprocess.call(command)
         command = ["sox", "/tmp/speech.wav", "-r", "44100", "-t", "wav", "/tmp/speech_sample.wav"]
         subprocess.call(command)
