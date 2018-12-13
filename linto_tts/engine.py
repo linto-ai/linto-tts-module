@@ -31,6 +31,7 @@ class TTSEngine(Thread):
     def change_lang(self, lang: str):
         if lang in ['en-US', 'en-GB', 'fr-FR', 'es-ES', 'de-DE', 'it-IT']:
             self.lang = lang
+            subprocess.run(["sudo", "linto_tts_conf", "set", "--lang={}".format(lang)])
             print("Language has been set to {}".format(lang))
         else:
             print("Wrong language argument: {}".format(lang))

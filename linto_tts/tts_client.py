@@ -68,7 +68,7 @@ class TTS_Speaker:
             logging.warning("Failed to load message {}".format(str(message.payload.decode("utf-8"))))
             return
         logging.debug("Received message '{}' from topic {}".format(msg, message.topic))
-        if message.topic == self.args.broker_topic:
+        if message.topic in [self.args.broker_topic, 'lintoclient/ask']:
             if 'value' in msg.keys():
                 self.ttsengine_thread.interupt_speech()
                 self.text_queue.put(msg['value'])
@@ -84,6 +84,7 @@ class TTS_Speaker:
         self.broker.subscribe(self.args.broker_topic)
         self.broker.subscribe(self.args.cancel_topic)
         self.broker.subscribe(self.args.lang_topic)
+        self.broker.subscribe('lintoclient/ask')
         print(self.args)
         
 def main():
