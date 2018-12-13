@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="linto_tts",
-    version="0.1.2",
+    version="0.1.3",
     include_package_data=True,
     packages=find_packages(),
     entry_points = {

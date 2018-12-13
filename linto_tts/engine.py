@@ -27,6 +27,13 @@ class TTSEngine(Thread):
 
     def interupt_speech(self):
         self.playing = False
+    
+    def change_lang(self, lang: str):
+        if lang in ['en-US', 'en-GB', 'fr-FR', 'es-ES', 'de-DE', 'it-IT']:
+            self.lang = lang
+            print("Language has been set to {}".format(lang))
+        else:
+            print("Wrong language argument: {}".format(lang))
             
     def say_text(self, text: str):
         """ Create a wav file using a pico2wave subprocess then play the result using pyaudio
