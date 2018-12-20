@@ -44,6 +44,7 @@ class TTSEngine(Thread):
         text -- sentence to be spoken
         """
         #Create sound file
+        print(text)
         command = ["pico2wave", "-l", self.lang, "-w", "/tmp/speech.wav", text]
         subprocess.call(command)
         command = ["sox", "/tmp/speech.wav", "-r", "44100", "-t", "wav", "/tmp/speech_sample.wav"]
@@ -58,13 +59,13 @@ class TTSEngine(Thread):
         data = f.readframes(self.chunk)
         self.playing = True
         payload = "{\"on\":\"%s\", \"value\":\"%s\"}" % (datetime.datetime.now().isoformat(), text)
-        self.manager.broker.publish('tts/speaking/start', payload)
+        self.manager.start_speech(payload)
         while data and self.playing:
             stream.write(data)
             data = f.readframes(self.chunk)
 
         payload = "{\"on\":\"%s\", \"value\":\"%s\"}" % (datetime.datetime.now().isoformat(), text)
-        self.manager.broker.publish('tts/speaking/stop', payload)
+        self.manager.stop_speech(payload)
 
         self.playing = False
         stream.stop_stream()

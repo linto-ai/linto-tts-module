@@ -23,7 +23,7 @@ class TTS_Speaker:
         
         #Engine
         self.ttsengine_thread = TTSEngine(self.text_queue, self.condition, args.lang, self)
-
+        self.question = False
         #MQTT broker client
         if args.broker_ip not in ['None', 'none', '']:
             self.broker = self.broker_connect()
@@ -68,7 +68,8 @@ class TTS_Speaker:
             logging.warning("Failed to load message {}".format(str(message.payload.decode("utf-8"))))
             return
         logging.debug("Received message '{}' from topic {}".format(msg, message.topic))
-        if message.topic in [self.args.broker_topic, 'lintoclient/ask']:
+        if message.topic in [self.args.broker_topic, self.args.ask_topic]:
+            self.question = message.topic == self.args.ask_topic
             if 'value' in msg.keys():
                 self.ttsengine_thread.interupt_speech()
                 self.text_queue.put(msg['value'])
@@ -78,6 +79,12 @@ class TTS_Speaker:
             if 'value' in msg.keys():
                 self.ttsengine_thread.change_lang(msg['value'])
         
+    def start_speech(self, payload):
+        self.broker.publish('tts/speaking/ask' if self.question else 'tts/speaking/start', payload)
+    
+    def stop_speech(self, payload):
+        self.broker.publish('tts/speaking/stop', payload)
+    
     def _on_broker_connect(self, client, userdata, flags, rc):
         logging.info("Connected to broker.")
         
@@ -94,20 +101,15 @@ def main():
     config = configparser.ConfigParser()
     config_set = 'DEFAULT'
     config.read(os.path.join(DIST_FOLDER, "config.conf"))
-    default_broker_ip = config[config_set]['broker_ip']
-    default_broker_port = config[config_set]['broker_port']
-    default_broker_topic = config[config_set]['broker_topic']
-    default_lang_topic = config[config_set]['lang_topic']
-    default_cancel_topic = config[config_set]['cancel_topic']
-    default_lang = config[config_set]['lang']
 
     parser = argparse.ArgumentParser(description='Text To Speech Module. Read text from MQTT broker and output it.')
-    parser.add_argument('--broker-ip',dest='broker_ip',default=default_broker_ip, help="MQTT Broker IP")
-    parser.add_argument('--broker-port', dest='broker_port',default=int(default_broker_port), help='MQTT broker port', type=int)
-    parser.add_argument('--broker-topic', dest='broker_topic', default=default_broker_topic, help='Broker on which to publish when the WUW is spotted')
-    parser.add_argument('--lang-topic', dest='lang_topic', default=default_lang_topic, help='Broker topic to switch language during runtime')
-    parser.add_argument('--cancel-topic', dest='cancel_topic', default=default_cancel_topic, help='Broker topic to switch language during runtime')
-    parser.add_argument('-l', dest='lang', default=default_lang, choices=['en-US', 'en-GB', 'fr-FR', 'es-ES', 'de-DE', 'it-IT'], help='Language')
+    parser.add_argument('--broker-ip',dest='broker_ip',default=config[config_set]['broker_ip'], help="MQTT Broker IP")
+    parser.add_argument('--broker-port', dest='broker_port',default=int(config[config_set]['broker_port']), help='MQTT broker port', type=int)
+    parser.add_argument('--broker-topic', dest='broker_topic', default=config[config_set]['broker_topic'], help='Broker on which to publish when the WUW is spotted')
+    parser.add_argument('--lang-topic', dest='lang_topic', default=config[config_set]['lang_topic'], help='Broker topic to switch language during runtime')
+    parser.add_argument('--cancel-topic', dest='cancel_topic', default=config[config_set]['cancel_topic'], help='Broker topic to switch language during runtime')
+    parser.add_argument('--ask-topic', dest='ask_topic', default=config[config_set]['ask_topic'], help='Alternative topic for questions')
+    parser.add_argument('-l', dest='lang', default=config[config_set]['lang'], choices=['en-US', 'en-GB', 'fr-FR', 'es-ES', 'de-DE', 'it-IT'], help='Language')
     args = parser.parse_args()
     
     #Instanciate runner
