@@ -1,12 +1,15 @@
 import os
 import json
 import datetime
+import logging
 from queue import Queue
 import configparser
 from threading import Thread
 import pyaudio
 import wave
 import subprocess
+
+logger = logging.getLogger()
 
 class Condition:
     """ 
@@ -15,7 +18,7 @@ class Condition:
     state = True
 
 class TTSEngine(Thread):
-    chunk = 1024
+    chunk = 2048
     def __init__(self, text_queue: Queue, condition: Condition, lang, manager):
         Thread.__init__(self)
         self.condition = condition
@@ -31,20 +34,17 @@ class TTSEngine(Thread):
     def change_lang(self, lang: str):
         if lang in ['en-US', 'en-GB', 'fr-FR', 'es-ES', 'de-DE', 'it-IT']:
             self.lang = lang
-            subprocess.run(["sudo", "linto_tts_conf", "set", "--lang={}".format(lang)])
-            print("Language has been set to {}".format(lang))
         else:
-            print("Wrong language argument: {}".format(lang))
+            logger.warning("Wrong language argument: {}".format(lang))
             
     def say_text(self, text: str):
         """ Create a wav file using a pico2wave subprocess then play the result using pyaudio
-
 
         Keyword arguments:
         text -- sentence to be spoken
         """
         #Create sound file
-        print(text)
+        logger.debug(text)
         command = ["pico2wave", "-l", self.lang, "-w", "/tmp/speech.wav", text]
         subprocess.call(command)
         command = ["sox", "/tmp/speech.wav", "-r", "44100", "-t", "wav", "/tmp/speech_sample.wav"]
@@ -72,13 +72,15 @@ class TTSEngine(Thread):
         stream.close()
 
     def run(self):
+        logging.debug("TTS engine started")
         while self.condition.state:
             text = self.text_queue.get()
+            logging.debug("Processing input: {}".format(text))
             if not self.condition.state:
                 break
             if self.playing:
                 self.interupt_speech()
             self.say_text(text)
             
-        print("TTS engine stopped")
+        logging.debug("TTS engine stopped")
 

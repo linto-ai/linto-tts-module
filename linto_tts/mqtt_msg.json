@@ -1,0 +1,20 @@
+{
+    "output": {
+        "start" : {
+            "topic": "tts/speaking/start'"
+        },
+        "stop" : {
+            "topic": "tts/speaking/stop"
+        },
+        "ask" : {
+            "topic": "tts/speaking/ask"
+        }
+    },
+    "input": {
+        "say_topics" : ["lintoclient/say"],
+        "ask_topic" : ["lintoclient/ask"],
+        "cancel_topics" : ["ui/cancel"],
+        "get_lang_topic" : [],
+        "set_lang_topic" : ["lintoclient/tts_lang"]
+    }
+}
