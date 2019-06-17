@@ -27,8 +27,8 @@ Two option tu use the tts-module:
 
 ### Binary
 It is a binary built using pyinstaller that comes with all python dependecies included.
-* x86_64: [Here]()
-* Armv7l: [Here]()
+* x86_64: [Here](https://github.com/linto-ai/linto-tts-module/releases/download/v0.2/linto_tts-0.1-x86_64.tar.gz)
+* Armv7l: [Here](https://github.com/linto-ai/linto-tts-module/releases/download/v0.2/linto_tts-0.1-armv7l.tar.gz)
 
 -----
 
