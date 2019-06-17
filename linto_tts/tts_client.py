@@ -96,7 +96,7 @@ class TTS_Speaker:
             return
         logging.debug("Received message '{}' from topic {}".format(msg, message.topic))
         if message.topic in self.mqtt_config['input']['say_topics'] or message.topic in self.mqtt_config['input']['ask_topics']:
-            #self.question = message.topic in self.mqtt_config['input']['ask_topics']
+            self.question = message.topic in self.mqtt_config['input']['ask_topics']
             if 'value' in msg.keys():
                 self.ttsengine_thread.interupt_speech()
                 self.text_queue.put(msg['value'])

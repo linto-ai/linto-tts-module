@@ -1,7 +1,7 @@
 {
     "output": {
         "start" : {
-            "topic": "tts/speaking/start'"
+            "topic": "tts/speaking/start"
         },
         "stop" : {
             "topic": "tts/speaking/stop"
@@ -12,7 +12,7 @@
     },
     "input": {
         "say_topics" : ["lintoclient/say"],
-        "ask_topic" : ["lintoclient/ask"],
+        "ask_topics" : ["lintoclient/ask"],
         "cancel_topics" : ["ui/cancel"],
         "get_lang_topic" : [],
         "set_lang_topic" : ["lintoclient/tts_lang"]
