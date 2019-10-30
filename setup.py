@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 from setuptools import setup, find_packages
+import json
 
+man = json.load(open('manifest.json'))
 setup(
     name="linto_tts",
-    version="0.1.4",
+    version=man['version'],
     include_package_data=True,
     packages=find_packages(),
     entry_points = {

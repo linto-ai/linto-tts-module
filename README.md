@@ -1,4 +1,6 @@
 # linto-tts-module
+![Version](https://img.shields.io/github/manifest-json/v/linto-ai/linto-tts-module) ![release](https://img.shields.io/github/v/release/linto-ai/linto-tts-module)
+
 
 The goal of this project is to provide a voice to LinTO Maker through Pico.
 It communicates the other elements using MQTT protocol.
