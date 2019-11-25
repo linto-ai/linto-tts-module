@@ -51,11 +51,17 @@ class TTSEngine(Thread):
         subprocess.call(command)
         #Play it
         f = wave.open("/tmp/speech_sample.wav")
-        stream = self.audio.open(format = self.audio.get_format_from_width(f.getsampwidth()),  
-                channels = f.getnchannels(),  
-                rate = f.getframerate(),  
-                output = True)
-
+        while True:
+            try:
+                stream = self.audio.open(format = self.audio.get_format_from_width(f.getsampwidth()),  
+                        channels = f.getnchannels(),  
+                        rate = f.getframerate(),  
+                        output = True)
+            except OSError as e:
+                logger.error("Failed to open stream, retrying")
+                self.audio = pyaudio.PyAudio()
+            else:
+                break
         data = f.readframes(self.chunk)
         self.playing = True
         payload = "{\"on\":\"%s\", \"value\":\"%s\"}" % (datetime.datetime.now().isoformat(), text)
